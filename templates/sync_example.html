@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sync example</title>
+</head>
+<body>
+  <button id="syncButton" onclick="startSynchronization()">Start Sync</button>
+
+  <script>
+    // let intervalId = null;
+
+    function startSynchronization () {
+      const button = document.getElementById("syncButton");
+
+      // Update UI
+      button.innerText = "Sync in progress...";
+      button.disabled = true; // optionally disable
+
+      // Start the sync task
+      fetch("/add", {
+        method: "POST"
+      })
+      .then(response => response.json())
+      .then(({ task_id }) => {
+        // intervalId = setInterval(() => checkTaskStatus(task_id), 2 * 1000);
+
+        checkTaskStatus(task_id);
+      })
+      .catch(error => {
+        console.error("Error starting sync:", error);
+        button.innerText = "Start Sync";
+        button.disabled = false;
+      });
+    }
+
+    function checkTaskStatus(taskId) {
+      fetch("/result/" + taskId)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data);
+          const button = document.getElementById("syncButton");
+
+          if (data.state === "SUCCESS") {
+            // clearInterval(intervalId);
+            button.innerText = "Sync Complete";
+            button.disabled = false;
+
+            if (data.result.includes("Task ignored")) {
+              alert("Une Tache est déjà en cours d'exécution");
+            } else {
+              alert("Sync complete: " + data.result);
+            }
+          } else if (data.state === "FAILURE") {
+            button.innerText = "Start Sync";
+            button.disabled = false;
+            alert("Sync failed!");
+          } 
+          else {
+            // Task still running — check again later
+            setTimeout(() => checkTaskStatus(taskId), 2000);
+          }
+        })
+        .catch(error => {
+        //   clearInterval(intervalId);
+          console.error("Error checking status:", error);
+          const button = document.getElementById("syncButton");
+          button.innerText = "Start Sync";
+          button.disabled = false;
+        });
+    }
+  </script>
+</body>
+</html>
