@@ -1,4 +1,3 @@
-# tasks.py
 import time
 import redis
 from celery import Celery
@@ -36,6 +35,6 @@ def with_redis_lock(auto_release_seconds:int):
 
 @celery.task
 @with_redis_lock(auto_release_seconds=900)
-def add(x, y):
-    time.sleep(10)
-    return x + y
+def async_task():
+    time.sleep(30)
+    return "async task completed !!"
