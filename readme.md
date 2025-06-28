@@ -1,10 +1,10 @@
-# 🧠 Flask + Celery + Redis
+# Flask + Celery + Redis
 
-A simple application using **Flask** for the web API, **Celery** for asynchronous background tasks, and **Redis** as the message broker/backend result.
+A simple demo application that uses 🔥 **Flask** for the web API, **Celery** for asynchronous background tasks, and **Redis** as the message broker & result backend.
 
 ---
 
-## 📦 Stack
+## 🚀 Stack
 
 - [Flask](https://flask.palletsprojects.com/)
 - [Celery](https://docs.celeryq.dev/)
@@ -12,14 +12,12 @@ A simple application using **Flask** for the web API, **Celery** for asynchronou
 
 ---
 
-## 🛠️ Installation
+## 🧩 Installation
 
-### 1. Clone the repo
-
-```bash
-git clone https://github.com/amine-tahri/flask-celery-redis.git
-cd flask-celery-redis
-```
+1. **Clone the repo**
+   ```bash
+   git clone https://github.com/amine-tahri/flask-celery-redis.git
+   cd flask-celery-redis
 
 ### 2. Create a virtual environment
 
@@ -56,9 +54,26 @@ celery -A tasks worker --loglevel=info
 
 ```bash
 flask-celery-redis/
-├── app.py             # Flask application
-├── tasks.py           # Celery tasks
-├── requirements.txt   # Python dependencies
-└── README.md
-
+├── app.py           # Flask web application
+├── tasks.py         # Celery task definitions
+├── requirements.txt # Project dependencies
+└── templates/
+    └── async_example.html  # Sample UI template
 ```
+
+# 🔧 How It Works
+
+**Flask** renders a page (e.g., /async-task-template) to let users trigger a background process.
+
+**Celery** sends the task you define to a worker, which runs it asynchronously.
+
+**Redis** acts as both the broker (queues tasks) and the result backend (stores task outcomes).
+
+# API Endpoints
+POST /async-task-template
+
+Dispatches a background job — returns a task_id.
+
+GET /result/<task_id>
+
+Polls the Celery backend to check task status: returns { state, result }.
