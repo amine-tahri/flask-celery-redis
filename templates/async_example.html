@@ -2,34 +2,31 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <title>Sync example</title>
+  <title>Async example</title>
 </head>
 <body>
-  <button id="syncButton" onclick="startSynchronization()">Start Sync</button>
+  <button id="asyncButton" onclick="startSynchronization()">Start Sync</button>
 
   <script>
-    // let intervalId = null;
 
     function startSynchronization () {
-      const button = document.getElementById("syncButton");
+      const button = document.getElementById("asyncButton");
 
       // Update UI
-      button.innerText = "Sync in progress...";
+      button.innerText = "Async in progress...";
       button.disabled = true; // optionally disable
 
       // Start the sync task
-      fetch("/add", {
+      fetch("/run-async-task", {
         method: "POST"
       })
       .then(response => response.json())
       .then(({ task_id }) => {
-        // intervalId = setInterval(() => checkTaskStatus(task_id), 2 * 1000);
-
         checkTaskStatus(task_id);
       })
       .catch(error => {
-        console.error("Error starting sync:", error);
-        button.innerText = "Start Sync";
+        console.error("Error starting async:", error);
+        button.innerText = "Start async";
         button.disabled = false;
       });
     }
@@ -39,22 +36,21 @@
         .then(response => response.json())
         .then(data => {
           console.log(data);
-          const button = document.getElementById("syncButton");
+          const button = document.getElementById("asyncButton");
 
           if (data.state === "SUCCESS") {
-            // clearInterval(intervalId);
-            button.innerText = "Sync Complete";
+            button.innerText = "Async Complete";
             button.disabled = false;
 
             if (data.result.includes("Task ignored")) {
               alert("Une Tache est déjà en cours d'exécution");
             } else {
-              alert("Sync complete: " + data.result);
+              alert("Async completed : " + data.result);
             }
           } else if (data.state === "FAILURE") {
-            button.innerText = "Start Sync";
+            button.innerText = "Start async";
             button.disabled = false;
-            alert("Sync failed!");
+            alert("Async failed!");
           } 
           else {
             // Task still running — check again later
@@ -62,10 +58,9 @@
           }
         })
         .catch(error => {
-        //   clearInterval(intervalId);
           console.error("Error checking status:", error);
-          const button = document.getElementById("syncButton");
-          button.innerText = "Start Sync";
+          const button = document.getElementById("asyncButton");
+          button.innerText = "Start async";
           button.disabled = false;
         });
     }
